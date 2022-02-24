@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LS (Bonus Generator)</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+<script src="https://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/redmond/jquery-ui.css" />
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+<script>
+$(document).ready(function() {
+
+    $( "#startDate,#endDate" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        firstDay: 1,
+        dateFormat: 'dd/mm/yy',
+    })
+
+    $( "#startDate" ).datepicker({ dateFormat: 'dd-mm-yy' });
+    $( "#endDate" ).datepicker({ dateFormat: 'dd-mm-yy' });
+
+    $('#endDate').change(function() {
+        var start = $('#startDate').datepicker('getDate');
+        var end   = $('#endDate').datepicker('getDate');
+
+        if (start<end) {
+        var days   = (end - start)/1000/60/60/24;
+                var element = document.getElementById("days");
+                element.innerHTML = days + " Days";
+                day = days;
+        }
+        else {
+            alert ("Invalid Starting and Ending!");
+            $('#startDate').val("");
+            $('#endDate').val("");
+            $('#days').val("");
+        }
+    }); //end change function
+}); //end ready
+    var day;
+    var minValue;
+    var maxValue;
+    var minBonus;
+    var maxBonus;
+    var minValueBonus;
+    var maxValueBonus;
+    
+    function setValues() {
+        setMinBonus();
+        setMaxBonus();
+        setMinValueBonus();
+        setMaxValueBonus();
+    }
+    
+    function setMinBonus() {
+        minBonus = (minValue/30)*day/10;
+        var element = document.getElementById("minBonusV");
+        element.innerHTML = "Minimum Bonus: ";
+        var element = document.getElementById("minBonusP");
+        element.innerHTML = minBonus.toFixed(2) + "$";
+        //alert(minBonus);
+    }
+    
+    function setMaxBonus() {
+        maxBonus = maxValue*day/300;
+        var element = document.getElementById("maxBonusV");
+        element.innerHTML = "Maximum Bonus: ";
+        var element = document.getElementById("maxBonusP");
+        element.innerHTML = maxBonus.toFixed(2) + "$";
+        //alert("max Bonus Here :D")
+    }
+    
+    function setMinValueBonus() {
+        minValueBonus = minBonus+(minValue/30)*day;
+        var element = document.getElementById("minValueBonusV");
+        element.innerHTML = "Minimum Sales of "+ day +" days";
+        var element = document.getElementById("minValueBonusP");
+        element.innerHTML = minValueBonus.toFixed(2) + "$";
+        //alert("Min Value Bonus Here :D")
+    }
+    
+    function setMaxValueBonus() {
+        maxValueBonus = maxBonus+(maxValue/30)*day;
+        var element = document.getElementById("maxValueBonusV");
+        element.innerHTML = "Maximum Sales of "+ day +" days";
+        var element = document.getElementById("maxValueBonusP");
+        element.innerHTML = maxValueBonus.toFixed(2) + "$";
+        //alert("Max Value Bonus Here :D")
+    }
+$( function() {
+    $( "#slider-range" ).slider({
+      range: true,
+      min: 0,
+      max: 500,
+      step: 5,
+      values: [ 75, 300 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+        minValue = ui.values[ 0 ];
+        maxValue = ui.values[ 1 ];
+        setValues();
+      }
+    });
+    minValue = $( "#slider-range" ).slider( "values", 0 );
+    maxValue = $( "#slider-range" ).slider( "values", 1 );
+    $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+  } );</script>
+  <script>
+  
+  </script>
+</head>
+<body>
+<nav class="navbar" style="background-color:#03045e; margin-bottom: 20px">
+    <h1 style="color: white; margin: auto">Bonus Generator</h1>
+</nav>
+    <div class="container">
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-8"><div class="card">
+      <div class="card-header" style="background-color: #0077b6; color: white; font-size: 22px; text-align: ">
+        Enter Date
+      </div>
+      <div class="card-body">
+    <div class="container" style="margin-top:60px; vertical-align: middle">
+        
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+            <label >Starting:
+                <input type="text" id="startDate"></label>
+            </div>
+            <div class="col-lg-6 col-md-12">
+            <label style="margin-left: 20px">Ending:
+                <input type="text" id="endDate"></label>
+            </div>
+          </div>
+        </div>
+            
+        <br>
+        <br>
+        <p id="days" style="color:#f6931f; font-weight:bold; font-size: 20px">Select Starting and Ending Date</p>
+          </div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="background-color: #0077b6; color: white; font-size: 22px">
+        Enter Price Range
+      </div>
+         <div class="container" style="margin:60px">
+            <p>
+              <label for="amount">Price range:</label>
+              <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;  ">
+            </p>
+
+            <div id="slider-range" style="margin-right:120px;"></div>
+             <table style="margin-top: 50px">
+              <tr>
+                <th>Description</th>
+                <th style="margin-left: 50px">Price</th>
+              </tr>
+              <tr>
+                <td id="minBonusV">Minimum Bonus: </td>
+                <td id="minBonusP">0$</td>
+              </tr>
+              <tr>
+                <td id="maxBonusV">Maximum Bonus: </td>
+                <td id="maxBonusP">0$</td>
+              </tr>
+              <tr>
+                <td id="minValueBonusV">Minimum Sales of 0 days</td>
+                <td id="minValueBonusP">0$</td>
+              </tr>
+              <tr>
+                <td id="maxValueBonusV">Maximum Sales of 0 days</td>
+                <td id="maxValueBonusP">0$</td>
+              </tr>
+            </table>
+        </div>
+    </div>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+    
+ 
+</body>
+</html>
